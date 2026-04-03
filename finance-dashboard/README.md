@@ -18,6 +18,52 @@ A RESTful API backend for a Finance Dashboard system, built with **Node.js**, **
 
 ---
 
+## Setup Instructions
+
+1. Clone the repository
+   git clone https://github.com/aditeejha/finance-dashboard.git
+
+2. Navigate to project folder
+   cd finance-dashboard
+
+3. Install dependencies
+   npm install
+
+4. Create a .env file using .env.example
+
+5. Start the server
+   npm run dev
+
+   ---
+
+## API Endpoints
+
+### Auth
+- POST /api/auth/register
+- POST /api/auth/login
+
+### Transactions
+- GET /api/transactions
+- POST /api/transactions
+- PUT /api/transactions/:id
+- DELETE /api/transactions/:id
+
+### Dashboard
+- GET /api/dashboard/summary
+
+---
+
+## Features
+
+- User authentication using JWT
+- Role-based access control (admin, analyst, viewer)
+- CRUD operations for financial transactions
+- Filtering by date, category, and type
+- Dashboard summary (totals and trends)
+- Input validation and error handling
+
+---
+
 ## Project Structure
 
 ```
