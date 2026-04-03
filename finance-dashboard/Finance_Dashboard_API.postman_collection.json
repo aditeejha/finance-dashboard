@@ -1,0 +1,438 @@
+{
+  "info": {
+    "name": "Finance Dashboard API",
+    "description": "Complete Postman collection for the Finance Dashboard backend.\n\n**Setup:**\n1. Import this file into Postman\n2. Import the environment file `Finance Dashboard.postman_environment.json`\n3. Run **Login as Admin** — the token is saved automatically\n4. All protected requests will use `{{token}}` from the environment\n\n**Roles:**\n- `admin@finance.com / admin123` — full access\n- `analyst@finance.com / analyst123` — read + dashboard\n- `viewer@finance.com / viewer123` — read transactions only",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000", "type": "string" },
+    { "key": "token",   "value": "",                     "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/register", "host": ["{{baseUrl}}"], "path": ["api","auth","register"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"viewer\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login as Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.token) {",
+                  "  pm.collectionVariables.set('token', res.data.token);",
+                  "  console.log('Token saved:', res.data.token.substring(0, 20) + '...');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api","auth","login"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@finance.com\",\n  \"password\": \"admin123\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login as Analyst",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.token) {",
+                  "  pm.collectionVariables.set('token', res.data.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api","auth","login"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"analyst@finance.com\",\n  \"password\": \"analyst123\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login as Viewer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.token) {",
+                  "  pm.collectionVariables.set('token', res.data.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api","auth","login"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"viewer@finance.com\",\n  \"password\": \"viewer123\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get My Profile",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/me", "host": ["{{baseUrl}}"], "path": ["api","auth","me"] }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Users (Admin only)",
+      "item": [
+        {
+          "name": "List All Users",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/users?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","users"],
+              "query": [
+                { "key": "page",  "value": "1" },
+                { "key": "limit", "value": "10" }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get User by ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/users/1", "host": ["{{baseUrl}}"], "path": ["api","users","1"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Update User (Admin — change role)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/users/3", "host": ["{{baseUrl}}"], "path": ["api","users","3"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"analyst\",\n  \"status\": \"active\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Deactivate User",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/users/3", "host": ["{{baseUrl}}"], "path": ["api","users","3"] }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Transactions",
+      "item": [
+        {
+          "name": "List All Transactions",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/transactions?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","transactions"],
+              "query": [
+                { "key": "page",  "value": "1" },
+                { "key": "limit", "value": "10" }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Filter by Type",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/transactions?type=expense",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","transactions"],
+              "query": [{ "key": "type", "value": "expense" }]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Filter by Date Range",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/transactions?startDate=2025-01-01&endDate=2025-03-31",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","transactions"],
+              "query": [
+                { "key": "startDate", "value": "2025-01-01" },
+                { "key": "endDate",   "value": "2025-03-31" }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Search Transactions",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/transactions?search=salary",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","transactions"],
+              "query": [{ "key": "search", "value": "salary" }]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Filter by Category",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/transactions?category=rent",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","transactions"],
+              "query": [{ "key": "category", "value": "rent" }]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Transaction by ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/transactions/1", "host": ["{{baseUrl}}"], "path": ["api","transactions","1"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Transaction (Admin only)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/transactions", "host": ["{{baseUrl}}"], "path": ["api","transactions"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 15000,\n  \"type\": \"income\",\n  \"category\": \"Freelance\",\n  \"date\": \"2025-04-01\",\n  \"notes\": \"Website redesign project\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Transaction (Admin only)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/transactions/1", "host": ["{{baseUrl}}"], "path": ["api","transactions","1"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 16000,\n  \"type\": \"income\",\n  \"category\": \"Freelance\",\n  \"date\": \"2025-04-01\",\n  \"notes\": \"Updated amount after invoice\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Transaction (Admin only — soft delete)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/transactions/1", "host": ["{{baseUrl}}"], "path": ["api","transactions","1"] }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Dashboard (Analyst + Admin)",
+      "item": [
+        {
+          "name": "Summary (income, expenses, balance)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/dashboard/summary", "host": ["{{baseUrl}}"], "path": ["api","dashboard","summary"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Category Breakdown",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/dashboard/categories", "host": ["{{baseUrl}}"], "path": ["api","dashboard","categories"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Monthly Trends (last 6 months)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/dashboard/trends?months=6",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","dashboard","trends"],
+              "query": [{ "key": "months", "value": "6" }]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Recent Activity (last 5)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/dashboard/recent?limit=5",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","dashboard","recent"],
+              "query": [{ "key": "limit", "value": "5" }]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Access Control Tests",
+      "description": "Use these to verify role restrictions work. Switch the token by running a different Login request first.",
+      "item": [
+        {
+          "name": "[Should 403] Viewer tries to create transaction",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/transactions", "host": ["{{baseUrl}}"], "path": ["api","transactions"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 1000,\n  \"type\": \"expense\",\n  \"category\": \"Test\",\n  \"date\": \"2025-04-01\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "[Should 403] Viewer tries to access dashboard",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/dashboard/summary", "host": ["{{baseUrl}}"], "path": ["api","dashboard","summary"] }
+          },
+          "response": []
+        },
+        {
+          "name": "[Should 403] Analyst tries to delete transaction",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/transactions/1", "host": ["{{baseUrl}}"], "path": ["api","transactions","1"] }
+          },
+          "response": []
+        },
+        {
+          "name": "[Should 401] No token provided",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/transactions", "host": ["{{baseUrl}}"], "path": ["api","transactions"] }
+          },
+          "response": []
+        },
+        {
+          "name": "[Should 400] Validation — invalid amount",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/transactions", "host": ["{{baseUrl}}"], "path": ["api","transactions"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": -500,\n  \"type\": \"income\",\n  \"category\": \"Test\",\n  \"date\": \"2025-04-01\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "[Should 429] Rate limit — hit auth endpoint 11 times",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api","auth","login"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"wrong@example.com\",\n  \"password\": \"wrongpassword\"\n}"
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
