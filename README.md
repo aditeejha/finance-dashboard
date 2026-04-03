@@ -24,7 +24,7 @@ A RESTful API backend for a Finance Dashboard system, built with **Node.js**, **
    git clone https://github.com/aditeejha/finance-dashboard.git
 
 2. Navigate to project folder
-   cd finance-dashboard/finance-dashboard
+   cd finance-dashboard
 
 3. Install dependencies
    npm install
